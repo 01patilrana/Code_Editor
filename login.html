@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Login - BugFreeCode Editor</title>
+<style>
+  body, html {
+    margin: 0; padding: 0; height: 100vh;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+  }
+  header {
+    background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+  }
+  main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .login-container {
+    background: rgba(255,255,255,0.95);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+  }
+  .login-container h2 {
+    margin-top: 0;
+    text-align: center;
+    color: #333;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+  input {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  button {
+    padding: 0.75rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+  .signup-link {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .signup-link a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+  .error {
+    color: red;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .success {
+    color: green;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .meta-line {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 0.75rem;
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>BugFreeCode Editor - Login</div>
+</header>
+<main>
+  <div class="login-container">
+    <h2>Login</h2>
+    <div id="error-message" class="error" style="display: none;"></div>
+    <div id="success-message" class="success" style="display: none;">Login successful! Redirecting...</div>
+
+    <form id="login-form">
+      <label for="email">Email:</label>
+      <input type="email" id="email" autocomplete="username" required>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" autocomplete="current-password" required>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="signup-link">
+      Don’t have an account? <a href="signup.html">Sign Up</a>
+    </div>
+
+    <div class="meta-line">
+      Uses localStorage demo auth (not for production).
+    </div>
+  </div>
+</main>
+
+<script>
+  function getUsers() {
+    try {
+      return JSON.parse(localStorage.getItem('users')) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  function setError(msg) {
+    const errorEl = document.getElementById('error-message');
+    const successEl = document.getElementById('success-message');
+    errorEl.textContent = msg;
+    errorEl.style.display = 'block';
+    successEl.style.display = 'none';
+  }
+
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    const users = getUsers();
+    const existingUser = users.find(u => u.email === email);
+
+    if (!existingUser) {
+      setError('Invalid email or password');
+      return;
+    }
+
+    if (existingUser.password !== password) {
+      setError('Invalid email or password');
+      return;
+    }
+
+    localStorage.setItem('currentUser', JSON.stringify(existingUser));
+
+    document.getElementById('error-message').style.display = 'none';
+    document.getElementById('success-message').style.display = 'block';
+
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 800);
+  });
+
+  // If already logged in, skip login page.
+  (function redirectIfLoggedIn() {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      window.location.replace('index.html');
+    }
+  })();
+</script>
+</body>
+</html>
+
